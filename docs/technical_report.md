@@ -44,6 +44,7 @@ XGBoost was selected as the primary model because:
 - **tenure_bins**: Discretized tenure into 4 buckets (0-12, 13-24, 25-48, 49+ months) to capture the nonlinear relationship between tenure and churn
 - **service_count**: Count of active add-on services (0-6). More services correlate with lower churn
 - **avg_monthly_charge**: Total charges divided by tenure. Captures price trajectory
+- **charge_per_service**: Monthly charges divided by number of services. Captures per-service cost efficiency
 
 ### Encoding Strategy
 - Binary features (married, senior citizen, etc.): One-hot with binary drop
@@ -57,6 +58,19 @@ We preserved the "No internet service" and "No phone service" categories rather 
 The dataset has 73.5% non-churners vs 26.5% churners. We address this through:
 - `scale_pos_weight=2.8` during XGBoost training (ratio of majority/minority)
 - Post-hoc threshold optimization: the default 0.5 threshold is shifted to ensure at least 80% recall (catching churners) while maximizing F1
+- Decision Tree explainability model uses `class_weight="balanced"` for the same reason
+
+### Why Not SMOTE or Undersampling?
+
+We considered alternative imbalance strategies:
+
+| Strategy | Decision | Reason |
+|----------|----------|--------|
+| **SMOTE** (oversampling) | Not used | Generates synthetic minority samples — effective on large datasets, but can introduce noise and overfitting on 7,043 rows. Studies show XGBoost with `scale_pos_weight` matches or outperforms SMOTE+XGBoost on moderate imbalance |
+| **Random undersampling** | Not used | Would discard ~3,300 majority-class samples — wasteful on an already small dataset |
+| **Ensemble methods** (BalancedBagging, EasyEnsemble) | Not used | Adds unnecessary complexity for a moderate imbalance ratio (26.5% is not extreme) |
+
+At 26.5% minority class, the imbalance is moderate — `scale_pos_weight` combined with recall-optimized threshold tuning is the standard best practice for XGBoost in this range. More aggressive techniques (SMOTE, ensemble resampling) are warranted for extreme imbalance (< 5% minority) but would risk overfitting here.
 
 ## 5. Key Churn Predictors (from SHAP analysis)
 
