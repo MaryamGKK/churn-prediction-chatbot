@@ -12,15 +12,16 @@ This PoC demonstrates an AI-powered solution that makes churn prediction accessi
 
 We evaluated multiple classical ML approaches on the Telco Customer Churn dataset (7,043 customers, 17 predictive features):
 
-| Model | AUC-ROC | F1 (Churn) | Notes |
-|-------|---------|------------|-------|
-| Logistic Regression | 0.84 | 0.60 | Simple baseline, fully interpretable |
-| Random Forest | 0.84 | 0.62 | Good but overfits on small data |
-| **XGBoost (tuned)** | **0.85** | **0.64** | **Best overall, handles imbalance well** |
-| Decision Tree (depth=5) | 0.83 | 0.58 | Used for explainability layer |
+| Model | AUC-ROC | F1 (Churn) | Recall (Churn) | Notes |
+|-------|---------|------------|----------------|-------|
+| Logistic Regression | 0.84 | 0.60 | — | Simple baseline, fully interpretable |
+| Random Forest | 0.84 | 0.62 | — | Good but overfits on small data |
+| **XGBoost (tuned)** | **0.85** | **0.64** | **0.81** | **Best overall, recall-optimized** |
+| Decision Tree (depth=5) | 0.83 | 0.58 | — | Used for explainability layer |
 
 XGBoost was selected as the primary model because:
 - Highest AUC-ROC (0.85) after Optuna hyperparameter tuning (50 trials, 5-fold CV)
+- Recall-optimized threshold (0.81 recall) — in churn prediction, missing a churner (false negative) is far more costly than a false alarm, since acquiring a new customer costs 5-25x more than retaining one. The threshold is tuned to ensure at least 80% of actual churners are caught.
 - Native handling of class imbalance via `scale_pos_weight`
 - Compatible with SHAP for per-prediction explanations
 - ONNX export for fast inference suitable for real-time chatbot responses
@@ -55,7 +56,7 @@ We preserved the "No internet service" and "No phone service" categories rather 
 
 The dataset has 73.5% non-churners vs 26.5% churners. We address this through:
 - `scale_pos_weight=2.8` during XGBoost training (ratio of majority/minority)
-- Post-hoc threshold optimization: the default 0.5 threshold is shifted to maximize F1 score on the validation set
+- Post-hoc threshold optimization: the default 0.5 threshold is shifted to ensure at least 80% recall (catching churners) while maximizing F1
 
 ## 5. Key Churn Predictors (from SHAP analysis)
 

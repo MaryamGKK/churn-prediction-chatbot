@@ -105,10 +105,9 @@ static/               # Chat UI
 
 | Metric | Score |
 |--------|-------|
+| Recall | 0.81 |
 | AUC-ROC | 0.85 |
 | F1 (churn class) | 0.64 |
-| Recall | 0.73 |
-| Precision | 0.58 |
 
 ## Tech Stack
 
