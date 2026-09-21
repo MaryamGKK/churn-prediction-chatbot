@@ -68,7 +68,7 @@ curl -X POST http://localhost:8000/chat \
 ```bash
 curl -X POST http://localhost:8000/predict \
   -H "Content-Type: application/json" \
-  -d '{"Senior_Citizen":0,"Is_Married":"Yes","Dependents":"Yes","tenure":24,"Phone_Service":"Yes","Internet_Service":"Fiber optic","Online_Security":"Yes","Online_Backup":"No","Device_Protection":"No","Tech_Support":"Yes","Streaming_TV":"No","Streaming_Movies":"No","Contract":"Month-to-month","Paperless_Billing":"Yes","Payment_Method":"Electronic check","Monthly_Charges":85,"Total_Charges":2040}'
+  -d '{"gender":"Male","Senior_Citizen":0,"Is_Married":"Yes","Dependents":"Yes","tenure":24,"Phone_Service":"Yes","Dual":"Yes","Internet_Service":"Fiber optic","Online_Security":"Yes","Online_Backup":"No","Device_Protection":"No","Tech_Support":"Yes","Streaming_TV":"No","Streaming_Movies":"No","Contract":"Month-to-month","Paperless_Billing":"Yes","Payment_Method":"Electronic check","Monthly_Charges":85,"Total_Charges":2040}'
 ```
 
 **API docs:** http://localhost:8000/docs
